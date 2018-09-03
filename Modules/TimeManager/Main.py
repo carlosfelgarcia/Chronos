@@ -11,17 +11,14 @@ import OSFactory
 
 
 class TimeManager(object):
-    """
-    Time manager main class
-    """
+    """Time manager main class."""
 
     def __init__(self):
-        """
-        Constructor
-        """
+        """Constructor."""
         self._osFactory = OSFactory.OSFactory()
         self._os = self._getOS()
-        self._os.getProcessRunning()
+        while True:
+            print(self._os.getProcessRunning())
         # self._os.test()
 
     def _getOS(self):
