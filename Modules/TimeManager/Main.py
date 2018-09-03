@@ -21,7 +21,7 @@ class TimeManager(object):
         """
         self._osFactory = OSFactory.OSFactory()
         self._os = self._getOS()
-        self._os.getAllProcesses()
+        self._os.getProcessRunning()
         # self._os.test()
 
     def _getOS(self):
