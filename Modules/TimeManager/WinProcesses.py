@@ -6,23 +6,25 @@ import time
 class WinProcesses(object):
     """Handle all the process for windows operate system."""
 
-    def getAllProcesses(self):
+    def getAllProcesses(self, osConfig):
         """
         Get all the processes and filter some of them.
 
-        Saved the process running to be faster and then it renew them every 30 seconds.
+        Saved the process running to be faster and then it renew them every 30 seconds base on the attribute set.
+        :param osConfig: The configuration load for the OS
+        :type osConfig: dict
         """
         parents = []
         startTime = time.time()
         endTime = 0
         reloadProcess = True
-        if endTime - startTime > self.RENEWPROCTIME:
+        if endTime - startTime > osConfig['lookupTime']:
             startTime = time.time()
             reloadProcess = True
         if reloadProcess:
             for proc in psutil.process_iter():
                 procParent = proc.parent()
-                if procParent is not None and procParent not in parents and procParent.name() not in self.SKIP:
+                if procParent and procParent not in parents and procParent.name() not in osConfig['skipProcess']:
                     parents.append(proc.parent())
             reloadProcess = False
 

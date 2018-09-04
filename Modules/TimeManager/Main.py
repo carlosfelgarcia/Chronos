@@ -17,9 +17,13 @@ class TimeManager(object):
         """Constructor."""
         self._osFactory = OSFactory.OSFactory()
         self._os = self._getOS()
+        self.run()
+
+    def run(self):
+        """Run the main app and start recording the processes use."""
+        osConfig = self._os.getConfig()
         while True:
-            print(self._os.getProcessRunning())
-        # self._os.test()
+            print(self._os.getProcessRunning(osConfig))
 
     def _getOS(self):
         osName = sys.platform
