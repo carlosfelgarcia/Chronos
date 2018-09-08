@@ -22,13 +22,22 @@ class OSInterface(object):
         """
         pass
 
-    def setConfig(self, configFile):
+    def getConfig(self):
+        """Get the attributes that are set in the confugaration file.
+
+        Atrributes that are coming from the user will averwritte any default value if matches the name.
+
+        :return: The attributes that are set in the file
+        :rtype: dict
+        """
+        pass
+
+    def setConfig(self, atrrs):
         """
         Set a configuration file to filter process and set other attributes.
 
-        Args:
-            configFile (str): The configuration file to be set.
-
+        :param attrs: Attributes to set the dictionary.
+        :type attrs: dict
         :returns: A confirmation that the file was set correctly.
         :rtype: bool
         """
