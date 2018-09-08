@@ -49,9 +49,8 @@ class WinMain(OSInterface):
         """
         Set a configuration file to filter process and set other attributes.
 
-        Args:
-            attrs (dict): Attributes to set the dictionary.
-
+        :param attrs: Attributes to set the dictionary.
+        :type attrs: dict
         :returns: A confirmation that the file was set correctly.
         :rtype: bool
         """

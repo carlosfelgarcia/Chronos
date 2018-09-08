@@ -1,15 +1,12 @@
-"""Module to handle all the windows processes."""
+"""Module to handle all the linux processes."""
 import psutil
 import time
 
 
 class LinuxProcesses(object):
-    """Handle all the process for windows operate system."""
+    """Handle all the process for linux operate system."""
 
-    __SKIP = ['System Idle Process', 'System']
-    __RENEWPROCTIME = 30
-
-    def getAllProcesses(self):
+    def getAllProcesses(self, osConfig):
         """
         Get all the processes and filter some of them.
 
@@ -20,19 +17,19 @@ class LinuxProcesses(object):
         endTime = 0
         reloadProcess = True
 
-        if endTime - startTime > self.__RENEWPROCTIME:
+        if endTime - startTime > osConfig['lookupTime']:
             startTime = time.time()
             reloadProcess = True
         if reloadProcess:
             for proc in psutil.process_iter():
                 procParent = proc.parent()
-                if procParent is not None and procParent not in parents and procParent.name() not in self.__SKIP:
+                if procParent and procParent not in parents and procParent.name() not in osConfig['skipProcess']:
                     parents.append(proc.parent())
             reloadProcess = False
 
         for parent in parents:
             try:
-                # In linux the inteval gets multiply so 1% = 10%
+                # In linux the inteval gets multiply by the real use, so 1% = 10%
                 cpuPercent = round(parent.cpu_percent(interval=0.1)/10, 2)
             except psutil.NoSuchProcess:
                 parents.remove(parent)
