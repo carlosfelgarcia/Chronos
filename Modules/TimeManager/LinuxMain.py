@@ -21,19 +21,33 @@ class LinuxMain(OSInterface):
         # Call default methods
         self.__linuxConfig.setDefaultAttrs()
 
-    def getProcessRunning(self, osConfig):
+    def getClosedProcesses(self):
+        """Get the the processes that are closed.
+
+        :return: A list of processes that no longer exist in the OS.
+        :rtype: list
+        """
+        return self.__linuxProcess.getClosedProcesses()
+
+    def reloadProcess(self, osConfig):
+        """Reload the processes running on the OS.
+
+        :param osConfig: The configuration load for the OS
+        :type osConfig: dict
+        """
+        self.__linuxProcess.reloadProcess(osConfig)
+
+    def getProcessRunning(self):
         """
         Get all the process that are running in the system.
 
         It looks all the processes and base on a configuration file it filters
         the returning values.
 
-        :param osConfig: The configuration load for the OS
-        :type osConfig: dict
         :returns: The process running on the system
         :rtype: list
         """
-        return self.__linuxProcess.getAllProcesses(osConfig)
+        return self.__linuxProcess.getAllProcesses()
 
     def getConfig(self):
         """Get the attributes that are set in the confugaration file.

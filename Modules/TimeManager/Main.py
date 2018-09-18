@@ -1,13 +1,11 @@
-'''
-Created on Aug 10, 2018
-
-@author: User
-'''
+"""Main class of the Time Manager."""
 # System imports
 import sys
+import time
 
 # Local import
 import OSFactory
+import ProcessFileManager
 
 
 class TimeManager(object):
@@ -15,28 +13,55 @@ class TimeManager(object):
 
     def __init__(self):
         """Constructor."""
-        self._osFactory = OSFactory.OSFactory()
-        self._os = self._getOS()
+        self.__osFactory = OSFactory.OSFactory()
+        self.__processeFileManager = ProcessFileManager.ProcessFileManager()
+        self.__os = self.__getOS()
+        self.__processCounter = {}
         self.run()
 
     def run(self):
         """Run the main app and start recording the processes use."""
-        osConfig = self._os.getConfig()
+        osConfig = self.__os.getConfig()
+        closedTimerStart = time.time()
+        # Initialize this variable with more value so it enter the first time
+        closedTimerEnd = closedTimerStart + osConfig['lookupTime'] + 2
         while True:
-            try:
-                cpuPercent, processName = self._os.getProcessRunning(osConfig)
-            except TypeError:
+            if closedTimerEnd - closedTimerStart > osConfig['lookupTime']:
+                print("COUNTER --> ", self.__processCounter)
+                closedTimerStart = time.time()
+                self.__os.reloadProcess(osConfig)
+                processToClose = self.__os.getClosedProcesses()
+
+                # Iterate over active processes and wait until 1 minute and half to declare it idle.
+                for processId, counter in self.__processCounter.items():
+                    if counter == 2:
+                        processToClose.append(processId)
+                        continue
+                    self.__processCounter[processId] += 1
+
+                # Clean the counter
+                for id in processToClose:
+                    if id in self.__processCounter:
+                        del self.__processCounter[id]
+
+                print("process to close --> ", processToClose)
+                self.__processeFileManager.stopProcesses(processToClose)
+
+            process = self.__os.getProcessRunning()
+            if not process:
+                closedTimerEnd = time.time()
                 continue
-            # TODO Sep 9 -> File system to save the info per day
-            # 1. Look for the last process and base on the config file it can assume it is working on it (e.g. Maya, word, etc..)
-            # 2. Maybe 30secs to one minute or more with high activity in the CPU
-            print('process name -> ', processName)
-            print('CPU --> ', cpuPercent)
 
+            print("process ---> ", process)
+            self.__processeFileManager.registerActiveProcess(process.name(), process.pid)
+            self.__processCounter[process.pid] = 0
+            print("Session ---> ", self.__processeFileManager.getProcessSession())
+            closedTimerEnd = time.time()
 
-    def _getOS(self):
+    def __getOS(self):
+        """Get the main OS module."""
         osName = sys.platform
-        return self._osFactory.getOS(osName)()
+        return self.__osFactory.getOS(osName)()
 
 
 if __name__ == '__main__':
