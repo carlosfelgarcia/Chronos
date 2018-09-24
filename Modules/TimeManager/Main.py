@@ -6,7 +6,7 @@ import time
 # Local import
 import OSFactory
 import ProcessFileManager
-
+import TimeActivity
 
 class TimeManager(object):
     """Time manager main class."""
@@ -15,6 +15,7 @@ class TimeManager(object):
         """Constructor."""
         self.__osFactory = OSFactory.OSFactory()
         self.__processeFileManager = ProcessFileManager.ProcessFileManager()
+        self.__timeActivity = TimeActivity.TimeActivity()
         self.__os = self.__getOS()
         self.__processCounter = {}
         self.run()
@@ -27,14 +28,13 @@ class TimeManager(object):
         closedTimerEnd = closedTimerStart + osConfig['lookupTime'] + 2
         while True:
             if closedTimerEnd - closedTimerStart > osConfig['lookupTime']:
-                print("COUNTER --> ", self.__processCounter)
                 closedTimerStart = time.time()
                 self.__os.reloadProcess(osConfig)
                 processToClose = self.__os.getClosedProcesses()
 
-                # Iterate over active processes and wait until 1 minute and half to declare it idle.
+                # Iterate over active processes and wait for the cycles setted to declare it idle.
                 for processId, counter in self.__processCounter.items():
-                    if counter == 2:
+                    if counter == osConfig['idleCycles']:
                         processToClose.append(processId)
                         continue
                     self.__processCounter[processId] += 1
@@ -44,7 +44,6 @@ class TimeManager(object):
                     if id in self.__processCounter:
                         del self.__processCounter[id]
 
-                print("process to close --> ", processToClose)
                 self.__processeFileManager.stopProcesses(processToClose)
 
             process = self.__os.getProcessRunning()
@@ -52,11 +51,14 @@ class TimeManager(object):
                 closedTimerEnd = time.time()
                 continue
 
-            print("process ---> ", process)
             self.__processeFileManager.registerActiveProcess(process.name(), process.pid)
             self.__processCounter[process.pid] = 0
-            print("Session ---> ", self.__processeFileManager.getProcessSession())
+            self.getTimePerProcess()
             closedTimerEnd = time.time()
+
+    def getTimePerProcess(self):
+        """Calculate the time per process base on the session."""
+        self.__timeActivity.getTimePerProcess(self.__processeFileManager.getProcessSession())
 
     def __getOS(self):
         """Get the main OS module."""

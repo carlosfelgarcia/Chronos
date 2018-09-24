@@ -13,7 +13,8 @@ class LinuxConfig(object):
         """Set the default values for Linux OS.
 
         Base on the default processes running from linx, there are some that can be skipped. It also set the time in
-        seconds of the renew process(Time when it look for new processes).
+        seconds of the look up to new processes on the OS. idleCycles is the number of cycles it takes for the process
+        to be consider idle, each cycle is base on the lookuptime and starts from 0 (e.g. 2 = 30 * 3 = 1minute 30secs).
         All of this values can be override by the main configuration.
 
         :pre: The directory of the file path already exist
@@ -24,7 +25,8 @@ class LinuxConfig(object):
                     'ksysguard',
                     'plasma-desktop'
                 ],
-                'lookupTime': 30
+                'lookupTime': 30,
+                'idleCycles': 2
             }
         }
         with open(self.__configFilePath, 'w') as configFile:
