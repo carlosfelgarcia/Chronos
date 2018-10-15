@@ -3,7 +3,7 @@
 # Standard imports
 import os
 import time
-# import json
+import json
 from datetime import datetime
 
 
@@ -70,4 +70,20 @@ class ProcessFileManager(object):
         endTime = time.time()
         # The current process is the latest that start
         for id in processIds:
+            if id not in self.__processes:
+                # Case when the system start at the same time the process was closing, so the process was not capture
+                continue
             self.__processes[id][self.__todayDate][-1]['endTime'] = endTime
+
+    def saveSession(self):
+        """Save the current session in a JSON file."""
+        self.__cleanProcesses()
+        with open(self.__processFile, 'w') as outfile:
+            json.dump(self.__processes, outfile)
+
+    def __cleanProcesses(self):
+        """Clean the process that have not finished nor closed from the current session."""
+        for pid, processesList in self.__processes.items():
+            for process in processesList:
+                if "endTime" not in process:
+                    del process

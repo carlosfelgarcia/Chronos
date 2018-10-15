@@ -6,10 +6,11 @@ import copy
 class LinuxProcesses(object):
     """Handle all the process for linux operate system."""
 
-    def __init__(self):
+    def __init__(self, osConfig):
         """Constructor."""
         self.__closedProcessIds = []
-        self.__parents = []
+        self.__activeProcesses = []
+        self.__osConfig = osConfig
 
     def getClosedProcesses(self):
         """Get the closed processes base on the lookup time."""
@@ -18,29 +19,46 @@ class LinuxProcesses(object):
         self.__closedProcessIds = []
         return processesIds
 
-    def reloadProcess(self, osConfig):
+    def loadProcess(self, ):
         """Reload the processes running on the OS.
 
         :param osConfig: The configuration load for the OS
         :type osConfig: dict
         """
+        cacheProcess = []
         for proc in psutil.process_iter():
-            procParent = proc.parent()
-            if procParent and procParent not in self.__parents and procParent.name() not in osConfig['skipProcess']:
-                self.__parents.append(procParent)
+            process = self.__loadProcess(proc, cacheProcess)
+            if process and process not in self.__activeProcesses:
+                self.__activeProcesses.append(process)
+
+        print("__activeProcesses --> ", self.__activeProcesses)
+
+    def __loadProcess(self, process, cacheProcess):
+        """TODO."""
+        if not process or process in cacheProcess:
+            return
+
+        cacheProcess.append(process)
+
+        # In linux the inteval gets multiply by the real use, so 1% = 10%
+        cpuPercent = round(process.cpu_percent(interval=0.1)/10, 2)
+        if cpuPercent > 2.0 and process.name() not in self.__osConfig['skipProcess']:
+            return process
+        else:
+            self.__loadProcess(process.parent(), cacheProcess)
 
     def getAllProcesses(self):
         """Get all the processes running in the OS."""
-        if not self.__parents:
-            print("No parents found :(")
-            return
-        for parent in self.__parents:
-            try:
-                # In linux the inteval gets multiply by the real use, so 1% = 10%
-                cpuPercent = round(parent.cpu_percent(interval=0.1)/10, 2)
-            except psutil.NoSuchProcess:
-                self.__parents.remove(parent)
-                self.__closedProcessIds.append(parent.pid)
-                continue
-            if cpuPercent > 2.0:
-                return parent
+        return self.__activeProcesses
+        # for parent in self.__activeProcesses:
+        #
+        #
+        #         cpuPercent = process
+        #         # print("NAME ---> ", parent.name())
+        #         # print("CPU ---> ", cpuPercent)
+        #     except psutil.NoSuchProcess:
+        #         self.__activeProcesses.remove(parent)
+        #         self.__closedProcessIds.append(parent.pid)
+        #         continue
+        #     if cpuPercent > 2.0:
+                # return parent

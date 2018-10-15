@@ -25,7 +25,7 @@ class LinuxConfig(object):
                     'ksysguard',
                     'plasma-desktop'
                 ],
-                'lookupTime': 30,
+                'lookupTime': 10,
                 'idleCycles': 2
             }
         }

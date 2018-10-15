@@ -14,12 +14,9 @@ class LinuxMain(OSInterface):
     def __init__(self):
         """Constructor."""
         self.__configFilePath = os.path.join(os.path.dirname(__file__), "linuxConfig.json")
-        # Initialize instances
-        self.__linuxProcess = LinuxProcesses.LinuxProcesses()
         self.__linuxConfig = LinuxConfig.LinuxConfig(self.__configFilePath)
-
-        # Call default methods
         self.__linuxConfig.setDefaultAttrs()
+        self.__linuxProcess = LinuxProcesses.LinuxProcesses(self.getConfig())
 
     def getClosedProcesses(self):
         """Get the the processes that are closed.
@@ -29,13 +26,13 @@ class LinuxMain(OSInterface):
         """
         return self.__linuxProcess.getClosedProcesses()
 
-    def reloadProcess(self, osConfig):
+    def loadProcess(self):
         """Reload the processes running on the OS.
 
         :param osConfig: The configuration load for the OS
         :type osConfig: dict
         """
-        self.__linuxProcess.reloadProcess(osConfig)
+        self.__linuxProcess.loadProcess()
 
     def getProcessRunning(self):
         """

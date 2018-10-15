@@ -2,11 +2,13 @@
 # System imports
 import sys
 import time
+import os
 
 # Local import
 import OSFactory
 import ProcessFileManager
 import TimeActivity
+
 
 class TimeManager(object):
     """Time manager main class."""
@@ -18,7 +20,6 @@ class TimeManager(object):
         self.__timeActivity = TimeActivity.TimeActivity()
         self.__os = self.__getOS()
         self.__processCounter = {}
-        self.run()
 
     def run(self):
         """Run the main app and start recording the processes use."""
@@ -29,7 +30,7 @@ class TimeManager(object):
         while True:
             if closedTimerEnd - closedTimerStart > osConfig['lookupTime']:
                 closedTimerStart = time.time()
-                self.__os.reloadProcess(osConfig)
+                self.__os.loadProcess()
                 processToClose = self.__os.getClosedProcesses()
 
                 # Iterate over active processes and wait for the cycles setted to declare it idle.
@@ -46,19 +47,23 @@ class TimeManager(object):
 
                 self.__processeFileManager.stopProcesses(processToClose)
 
-            process = self.__os.getProcessRunning()
-            if not process:
+            processes = self.__os.getProcessRunning()
+            if not processes:
                 closedTimerEnd = time.time()
                 continue
+            for process in processes:
+                self.__processeFileManager.registerActiveProcess(process.name(), process.pid)
+                self.__processCounter[process.pid] = 0
+                print('TIME per Process ---->> ', self.getCurrentTimePerProcess())
+                closedTimerEnd = time.time()
 
-            self.__processeFileManager.registerActiveProcess(process.name(), process.pid)
-            self.__processCounter[process.pid] = 0
-            self.getTimePerProcess()
-            closedTimerEnd = time.time()
+    def getCurrentTimePerProcess(self):
+        """Calculate the time per process base on the current session."""
+        return self.__timeActivity.getCurrentTimePerProcess(self.__processeFileManager.getProcessSession())
 
-    def getTimePerProcess(self):
-        """Calculate the time per process base on the session."""
-        self.__timeActivity.getTimePerProcess(self.__processeFileManager.getProcessSession())
+    def saveSession(self):
+        """Save the current session in a JSON file."""
+        self.__processeFileManager.saveSession()
 
     def __getOS(self):
         """Get the main OS module."""
@@ -67,4 +72,12 @@ class TimeManager(object):
 
 
 if __name__ == '__main__':
-    tm = TimeManager()
+    try:
+        tm = TimeManager()
+        tm.run()
+    except KeyboardInterrupt:
+        tm.saveSession()
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
