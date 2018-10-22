@@ -1,4 +1,4 @@
-"""Main class to handle windows process."""
+"""Main class to handle linux process."""
 # Standard imports
 import os
 
@@ -26,15 +26,7 @@ class LinuxMain(OSInterface):
         """
         return self.__linuxProcess.getClosedProcesses()
 
-    def loadProcess(self):
-        """Reload the processes running on the OS.
-
-        :param osConfig: The configuration load for the OS
-        :type osConfig: dict
-        """
-        self.__linuxProcess.loadProcess()
-
-    def getProcessRunning(self):
+    def getActiveProcesses(self):
         """
         Get all the process that are running in the system.
 
@@ -44,7 +36,7 @@ class LinuxMain(OSInterface):
         :returns: The process running on the system
         :rtype: list
         """
-        return self.__linuxProcess.getAllProcesses()
+        return self.__linuxProcess.getActiveProcesses()
 
     def getConfig(self):
         """Get the attributes that are set in the confugaration file.

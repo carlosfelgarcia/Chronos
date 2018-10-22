@@ -24,38 +24,32 @@ class TimeManager(object):
     def run(self):
         """Run the main app and start recording the processes use."""
         osConfig = self.__os.getConfig()
-        closedTimerStart = time.time()
-        # Initialize this variable with more value so it enter the first time
-        closedTimerEnd = closedTimerStart + osConfig['lookupTime'] + 2
         while True:
-            if closedTimerEnd - closedTimerStart > osConfig['lookupTime']:
-                closedTimerStart = time.time()
-                self.__os.loadProcess()
-                processToClose = self.__os.getClosedProcesses()
+            processToClose = self.__os.getClosedProcesses()
 
-                # Iterate over active processes and wait for the cycles setted to declare it idle.
-                for processId, counter in self.__processCounter.items():
-                    if counter == osConfig['idleCycles']:
-                        processToClose.append(processId)
-                        continue
-                    self.__processCounter[processId] += 1
+            # Iterate over active processes and wait for the cycles setted to declare it idle.
+            for processId, counter in self.__processCounter.items():
+                if counter == osConfig['idleCycles']:
+                    processToClose.append(processId)
+                    continue
+                self.__processCounter[processId] += 1
 
-                # Clean the counter
-                for id in processToClose:
-                    if id in self.__processCounter:
-                        del self.__processCounter[id]
+            # Clean the counter
+            for id in processToClose:
+                if id in self.__processCounter:
+                    del self.__processCounter[id]
 
-                self.__processeFileManager.stopProcesses(processToClose)
+            # Stop the process that are idle
+            self.__processeFileManager.stopProcesses(processToClose)
 
-            processes = self.__os.getProcessRunning()
-            if not processes:
-                closedTimerEnd = time.time()
-                continue
+            # Get active processes and register them
+            processes = self.__os.getActiveProcesses()
             for process in processes:
-                self.__processeFileManager.registerActiveProcess(process.name(), process.pid)
+                self.__processeFileManager.registerActiveProcess(process.info['name'], process.info['pid'])
                 self.__processCounter[process.pid] = 0
-                print('TIME per Process ---->> ', self.getCurrentTimePerProcess())
-                closedTimerEnd = time.time()
+
+            # Wait for lookup seconds to look for more processes
+            time.sleep(osConfig['lookupTime'])
 
     def getCurrentTimePerProcess(self):
         """Calculate the time per process base on the current session."""

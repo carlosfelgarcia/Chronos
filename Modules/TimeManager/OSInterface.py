@@ -2,7 +2,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class OSInterface(object):
+class OSInterface:
     """
     Interface for any OS.
 
@@ -18,6 +18,7 @@ class OSInterface(object):
         :return: A list of processes that no longer exist in the OS.
         :rtype: list
         """
+        pass
 
     @abstractmethod
     def reloadProcess(self, osConfig):
@@ -26,6 +27,7 @@ class OSInterface(object):
         :param osConfig: The configuration load for the OS
         :type osConfig: dict
         """
+        pass
 
     @abstractmethod
     def getProcessRunning(self):
