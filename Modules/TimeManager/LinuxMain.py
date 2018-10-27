@@ -1,4 +1,4 @@
-"""Main class to handle windows process."""
+"""Main class to handle linux process."""
 # Standard imports
 import os
 
@@ -14,12 +14,9 @@ class LinuxMain(OSInterface):
     def __init__(self):
         """Constructor."""
         self.__configFilePath = os.path.join(os.path.dirname(__file__), "linuxConfig.json")
-        # Initialize instances
-        self.__linuxProcess = LinuxProcesses.LinuxProcesses()
         self.__linuxConfig = LinuxConfig.LinuxConfig(self.__configFilePath)
-
-        # Call default methods
         self.__linuxConfig.setDefaultAttrs()
+        self.__linuxProcess = LinuxProcesses.LinuxProcesses(self.getConfig())
 
     def getClosedProcesses(self):
         """Get the the processes that are closed.
@@ -29,15 +26,7 @@ class LinuxMain(OSInterface):
         """
         return self.__linuxProcess.getClosedProcesses()
 
-    def reloadProcess(self, osConfig):
-        """Reload the processes running on the OS.
-
-        :param osConfig: The configuration load for the OS
-        :type osConfig: dict
-        """
-        self.__linuxProcess.reloadProcess(osConfig)
-
-    def getProcessRunning(self):
+    def getActiveProcesses(self):
         """
         Get all the process that are running in the system.
 
@@ -47,7 +36,7 @@ class LinuxMain(OSInterface):
         :returns: The process running on the system
         :rtype: list
         """
-        return self.__linuxProcess.getAllProcesses()
+        return self.__linuxProcess.getActiveProcesses()
 
     def getConfig(self):
         """Get the attributes that are set in the confugaration file.

@@ -1,1 +1,1 @@
-{"defaultAttrs": {"skipProcess": ["ksysguard", "plasma-desktop"], "lookupTime": 30, "idleCycles": 2}}
+{"defaultAttrs": {"skipProcess": ["plasma-desktop", "python3.6", "kded4", "at-spi2-registryd", "X", "ksysguard", "NetworkManager", "pylama", "kwin", "kworker", "rcu_sched", "irq/64-nvidia", "polkitd", "akonadiserver", "irqbalance", "pulseaudio", "sleep", "krunner", "gvfs-udisks2", "cupsd", "systemd", "ksoftirqd"], "lookupTime": 1, "idleCycles": 30}}
