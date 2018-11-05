@@ -45,7 +45,9 @@ class TimeManager(object):
             # Get active processes and register them
             processes = self.__os.getActiveProcesses()
             for process in processes:
-                self.__processeFileManager.registerActiveProcess(process.info['name'], process.info['pid'])
+                # Clean the name for windows processes
+                procName = process.info['name'].lower().replace('.exe', '')
+                self.__processeFileManager.registerActiveProcess(procName, process.info['pid'])
                 self.__processCounter[process.pid] = 0
 
             # Wait for lookup seconds to look for more processes

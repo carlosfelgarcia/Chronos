@@ -1,11 +1,11 @@
 """Main class to handle windows process."""
+# Standard imports
+import os
+
 # Local imports
 import WinProcesses
 import WinConfig
 from OSInterface import OSInterface
-
-# Standard imports
-import os
 
 
 class WinMain(OSInterface):
@@ -14,26 +14,29 @@ class WinMain(OSInterface):
     def __init__(self):
         """Constructor."""
         self.__configFilePath = os.path.join(os.path.dirname(__file__), "winConfig.json")
-        # Initialize instances
-        self.__winProcess = WinProcesses.WinProcesses()
         self.__winConfig = WinConfig.WinConfig(self.__configFilePath)
-
-        # Call default methods
         self.__winConfig.setDefaultAttrs()
+        self.__winProcess = WinProcesses.WinProcesses(self.getConfig())
 
-    def getProcessRunning(self, osConfig):
+    def getClosedProcesses(self):
+        """Get the the processes that are closed.
+
+        :return: A list of processes that no longer exist in the OS.
+        :rtype: list
+        """
+        return self.__winProcess.getClosedProcesses()
+
+    def getActiveProcesses(self):
         """
         Get all the process that are running in the system.
 
         It looks all the processes and base on a configuration file it filters
         the returning values.
 
-        :param osConfig: The configuration load for the OS
-        :type osConfig: dict
         :returns: The process running on the system
         :rtype: list
         """
-        return self.__winProcess.getAllProcesses(osConfig)
+        return self.__winProcess.getActiveProcesses()
 
     def getConfig(self):
         """Get the attributes that are set in the confugaration file.

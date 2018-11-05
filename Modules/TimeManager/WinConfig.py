@@ -21,10 +21,15 @@ class WinConfig(object):
         defaultAttrs = {
             'defaultAttrs': {
                 'skipProcess': [
-                    'System Idle Process',
-                    'System'
+                    'System',
+                    'conhost',
+                    'AppleChromeDAV',
+                    'python',
+                    'RdrCEF',
+                    'kited'
                 ],
-                'lookupTime': 30
+                'lookupTime': 1,
+                'idleCycles': 30
             }
         }
         with open(self.__configFilePath, 'w') as configFile:
