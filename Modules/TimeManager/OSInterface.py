@@ -1,17 +1,15 @@
 """Interface for any OS module."""
-from abc import ABCMeta, abstractmethod
+import abc
 
 
-class OSInterface:
+class OSInterface(abc.ABC):
     """
     Interface for any OS.
 
     Minimum functions required for any OS module (Windows, Lunix, Etc..).
     """
 
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
+    @abc.abstractmethod
     def getClosedProcesses(self):
         """Get the the processes that are closed.
 
@@ -20,17 +18,8 @@ class OSInterface:
         """
         pass
 
-    @abstractmethod
-    def reloadProcess(self, osConfig):
-        """Reload the processes running on the OS.
-
-        :param osConfig: The configuration load for the OS
-        :type osConfig: dict
-        """
-        pass
-
-    @abstractmethod
-    def getProcessRunning(self):
+    @abc.abstractmethod
+    def getActiveProcesses(self):
         """
         Get all the process that are running in the system.
 
@@ -42,7 +31,7 @@ class OSInterface:
         """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def getConfig(self):
         """Get the attributes that are set in the confugaration file.
 
@@ -53,7 +42,7 @@ class OSInterface:
         """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def setConfig(self, atrrs):
         """
         Set a configuration file to filter process and set other attributes.

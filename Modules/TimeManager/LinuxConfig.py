@@ -43,7 +43,13 @@ class LinuxConfig(object):
                     'gvfs-udisks2',
                     'cupsd',
                     'systemd',
-                    'ksoftirqd'
+                    'ksoftirqd',
+                    'xfsaild',
+                    'nvidia',
+                    'updatedb',
+                    'kmix',
+                    'mission-control',
+                    'dbus'
                 ],
                 'lookupTime': 1,
                 'idleCycles': 30

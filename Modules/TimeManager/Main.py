@@ -57,6 +57,11 @@ class TimeManager(object):
         """Calculate the time per process base on the current session."""
         return self.__timeActivity.getCurrentTimePerProcess(self.__processeFileManager.getProcessSession())
 
+    def getWeeklyTime(self):
+        """Calculate the time per process base on the current session."""
+        savedSession = self.__processeFileManager.getSavedSession()
+        return self.__timeActivity.getProcessesByTime(savedSession, days=7)
+
     def saveSession(self):
         """Save the current session in a JSON file."""
         self.__processeFileManager.saveSession()
