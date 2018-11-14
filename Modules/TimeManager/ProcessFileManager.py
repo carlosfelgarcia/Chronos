@@ -26,7 +26,7 @@ class ProcessFileManager(object):
         return self.__processes
 
     def getSavedSession(self):
-        """Get the session savedself.
+        """Get the session saved.
 
         :return: The session saved as a dictionary or None
         """

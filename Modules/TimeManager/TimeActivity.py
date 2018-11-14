@@ -1,6 +1,6 @@
 """It handles all the logic to calculate the time spending on the process."""
 # Standard imports
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class TimeActivity(object):
@@ -8,7 +8,7 @@ class TimeActivity(object):
 
     def __init__(self):
         """Constructor. (place holder for now)."""
-        self.__todayDate = datetime.today().strftime('%Y-%m-%d')
+        self.__todayDate = datetime.today()
 
     def getCurrentTimePerProcess(self, session):
         """Calculate the time per process base on the current session.
@@ -48,7 +48,23 @@ class TimeActivity(object):
 
         return timePerProcess
 
-    def getTimePerProcessWeek(self, session):
-        """TODO."""
-        # TODO
-        pass
+    def getProcessesByTime(self, savedSession, days=7):
+        """Get the time per process over the specified days.
+
+        By default the days specified are a week ago.
+
+        :param savedSession: The sessions saved.
+        :type savedSession: dict
+        """
+        processes = {}
+        datesWeek = [(self.__todayDate - timedelta(days=day)).strftime('%Y-%m-%d') for day in range(days)]
+        for day in datesWeek:
+            daysession = savedSession.get(day, None)
+            if not daysession:
+                continue
+            for app, time in daysession.items():
+                if app not in processes:
+                    processes[app] = time
+                else:
+                    processes[app] += time
+        return processes

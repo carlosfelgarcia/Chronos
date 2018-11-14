@@ -1,6 +1,5 @@
 """Module to handle all the linux processes."""
 import psutil
-import copy
 
 
 class LinuxProcesses(object):
@@ -15,9 +14,7 @@ class LinuxProcesses(object):
         """Get the closed processes base on the lookup time."""
         # We are going to reset the object to an empty list, so it needs to be copied.
         closeProcesses = []
-        print("LEN --> ", len(self.__activeProcesses))
         for process in self.__activeProcesses:
-            print("name --> ", process.info["name"])
             if not psutil.pid_exists(process.info['pid']):
                 closeProcesses.append(process)
 
