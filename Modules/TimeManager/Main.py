@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.6
 """Main class of the Time Manager."""
 # System imports
 import sys
@@ -8,6 +9,7 @@ import os
 import OSFactory
 import ProcessFileManager
 import TimeActivity
+import UIServer
 
 
 class TimeManager(object):
@@ -20,6 +22,9 @@ class TimeManager(object):
         self.__timeActivity = TimeActivity.TimeActivity()
         self.__os = self.__getOS()
         self.__processCounter = {}
+
+        # Start UI Server
+        UIServer.UIServer()
 
     def run(self):
         """Run the main app and start recording the processes use."""
@@ -73,8 +78,8 @@ class TimeManager(object):
 
 
 if __name__ == '__main__':
+    tm = TimeManager()
     try:
-        tm = TimeManager()
         tm.run()
     except KeyboardInterrupt:
         tm.saveSession()
