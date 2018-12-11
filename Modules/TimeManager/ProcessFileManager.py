@@ -104,7 +104,6 @@ class ProcessFileManager(object):
         :rtype: dict
         """
         savedSession = self.getSavedSession()
-        print("SAVED ---> ", savedSession)
         for date, processDict in currentSession.items():
             if date in savedSession:
                 for processName, totalTime in processDict.items():
