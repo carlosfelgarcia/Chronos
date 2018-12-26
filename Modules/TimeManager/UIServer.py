@@ -6,8 +6,9 @@ from threading import Thread
 class UIServer(object):
     """Server that handles comunications to different UI clients."""
 
-    def __init__(self, host='', port=2243, bufferSize=1024, maxThreads=2):
+    def __init__(self, main, host='localHost', port=2243, bufferSize=1024, maxThreads=2):
         """Constuctor."""
+        self.__main = main
         self.__bufferSize = bufferSize
         self.__serverSocket = socket(AF_INET, SOCK_STREAM)
         self.startServer(host, port, maxThreads)
@@ -40,9 +41,12 @@ class UIServer(object):
         """Recived all the commands from the client."""
         while True:
             cmd = client.recv(self.__bufferSize).decode('UTF-8')
-            print(cmd)
-            print(type(cmd))
             if cmd == 'quit':
-                print('Break')
                 client.close()
                 break
+            elif cmd == 'current':
+                    current = self.__main.getCurrentTimePerProcess()
+                    message = 'Current Session:\n'
+                    for proc, time in current.items():
+                        message += 'Process: {proc} time spend: {time}\n'.format(proc=proc, time=time)
+                    client.send(bytes(message, "utf8"))

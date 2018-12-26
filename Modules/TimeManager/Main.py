@@ -4,6 +4,7 @@
 import sys
 import time
 import os
+from threading import Thread
 
 # Local import
 import OSFactory
@@ -22,9 +23,6 @@ class TimeManager(object):
         self.__timeActivity = TimeActivity.TimeActivity()
         self.__os = self.__getOS()
         self.__processCounter = {}
-
-        # Start UI Server
-        UIServer.UIServer()
 
     def run(self):
         """Run the main app and start recording the processes use."""
@@ -55,6 +53,8 @@ class TimeManager(object):
                 self.__processeFileManager.registerActiveProcess(procName, process.info['pid'])
                 self.__processCounter[process.pid] = 0
 
+            # Save session
+            self.saveSession()
             # Wait for lookup seconds to look for more processes
             time.sleep(osConfig['lookupTime'])
 
@@ -78,12 +78,9 @@ class TimeManager(object):
 
 
 if __name__ == '__main__':
+    # Set threads to each process so it will be faster and can handle infinte cycles on each thread
     tm = TimeManager()
-    try:
-        tm.run()
-    except KeyboardInterrupt:
-        tm.saveSession()
-        try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
+    threadRun = Thread(target=tm.run)
+    threadRun.start()
+    threadServer = Thread(target=UIServer.UIServer, args=(tm,))
+    threadServer.start()

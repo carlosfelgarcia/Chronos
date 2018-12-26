@@ -29,7 +29,7 @@ class WinConfig(object):
                     'kited'
                 ],
                 'lookupTime': 1,
-                'idleCycles': 30
+                'idleCycles': 30,
             }
         }
         with open(self.__configFilePath, 'w') as configFile:
