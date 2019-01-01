@@ -1,1 +1,1 @@
-{"defaultAttrs": {"skipProcess": ["System", "conhost", "AppleChromeDAV", "python", "RdrCEF", "kited"], "lookupTime": 1, "idleCycles": 30}}
+{"defaultAttrs": {"skipProcess": ["System", "conhost", "AppleChromeDAV", "python", "RdrCEF", "kited", "searchui", "runtimebroker", "backgroundtaskhost"], "lookupTime": 1, "idleCycles": 30, "saveSessionCycles": 15}}

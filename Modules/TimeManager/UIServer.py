@@ -45,8 +45,7 @@ class UIServer(object):
                 client.close()
                 break
             elif cmd == 'current':
-                    current = self.__main.getCurrentTimePerProcess()
-                    message = 'Current Session:\n'
-                    for proc, time in current.items():
-                        message += 'Process: {proc} time spend: {time}\n'.format(proc=proc, time=time)
-                    client.send(bytes(message, "utf8"))
+                current = str(self.__main.getCurrentTimePerProcess())
+                client.send(bytes(current, "utf8"))
+            else:
+                client.send(bytes("Command no implemented",  "utf8"))

@@ -23,11 +23,14 @@ class TimeManager(object):
         self.__timeActivity = TimeActivity.TimeActivity()
         self.__os = self.__getOS()
         self.__processCounter = {}
+        # This is a generic counter for different proccess within the main loop
+        self.__mainCounter = {'saveSession': 0}
 
     def run(self):
         """Run the main app and start recording the processes use."""
         osConfig = self.__os.getConfig()
         while True:
+
             processToClose = self.__os.getClosedProcesses()
 
             # Iterate over active processes and wait for the cycles setted to declare it idle.
@@ -54,7 +57,11 @@ class TimeManager(object):
                 self.__processCounter[process.pid] = 0
 
             # Save session
-            self.saveSession()
+            if self.__mainCounter['saveSession'] == osConfig['saveSessionCycles']:
+                self.saveSession()
+                self.__mainCounter['saveSession'] = 0
+            else:
+                self.__mainCounter['saveSession'] += 1
             # Wait for lookup seconds to look for more processes
             time.sleep(osConfig['lookupTime'])
 
