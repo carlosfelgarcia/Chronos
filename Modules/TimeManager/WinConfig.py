@@ -26,10 +26,14 @@ class WinConfig(object):
                     'AppleChromeDAV',
                     'python',
                     'RdrCEF',
-                    'kited'
+                    'kited',
+                    'searchui',
+                    'runtimebroker',
+                    'backgroundtaskhost',
                 ],
                 'lookupTime': 1,
                 'idleCycles': 30,
+                'saveSessionCycles': 15,
             }
         }
         with open(self.__configFilePath, 'w') as configFile:
